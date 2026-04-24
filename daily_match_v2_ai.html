@@ -1,0 +1,762 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=Geist:wght@300;400;500&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --cr:#F9F6F1;--w:#FEFDFB;--k:#18170F;--k2:#2A2920;
+  --mid:#6E6A60;--soft:#B0AC9F;--bd:rgba(24,23,15,0.08);--bd2:rgba(24,23,15,0.14);
+  --gd:#C4A46B;--gdl:#F3EAD8;--gdd:#8B6E3E;
+  --serif:'Cormorant',Georgia,serif;--sans:'Geist',system-ui,sans-serif;
+}
+
+body{background:#111;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:var(--sans)}
+.phone{width:360px;height:780px;background:var(--w);border-radius:44px;overflow:hidden;position:relative;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,0.6)}
+
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity 0.35s ease,transform 0.35s ease;transform:translateX(20px)}
+.screen.active{opacity:1;pointer-events:all;transform:translateX(0)}
+.screen.out{transform:translateX(-20px)}
+
+.sb{display:flex;justify-content:space-between;align-items:center;padding:12px 22px 0;font-size:11px;font-weight:500;flex-shrink:0}
+.sb.dk{color:var(--k)}.sb.lt{color:rgba(255,255,255,0.5)}
+
+.scr{flex:1;overflow-y:auto;scrollbar-width:none}.scr::-webkit-scrollbar{display:none}
+
+/* NAV */
+.bnav{background:rgba(254,253,251,0.96);backdrop-filter:blur(20px);border-top:0.5px solid var(--bd);display:flex;padding:6px 0 20px;flex-shrink:0;z-index:50;position:relative}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px 2px;transition:transform 0.15s}
+.nb:active{transform:scale(0.85)}
+.nb-ic{font-size:17px;line-height:1.3}
+.nb-lbl{font-size:8px;font-weight:500;color:var(--soft);letter-spacing:0.05em;text-transform:uppercase;transition:color 0.2s}
+.nb.on .nb-lbl{color:var(--k)}
+.nb-pip{width:3px;height:3px;border-radius:50%;background:var(--gd);margin:1px auto 0;opacity:0;transition:opacity 0.2s}
+.nb.on .nb-pip{opacity:1}
+
+/* TOPBAR */
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:6px 18px 10px;flex-shrink:0}
+.logo{font-family:var(--serif);font-size:19px;font-weight:400;color:var(--k)}
+.logo em{color:var(--gd);font-style:italic}
+.ava{width:30px;height:30px;border-radius:50%;background:var(--gdl);border:1.5px solid var(--gd);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:13px;color:var(--gdd);cursor:pointer}
+
+/* SPLASH */
+#sp{background:var(--k)}
+.sp-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.sp-ring{position:absolute;border-radius:50%;border:1px solid rgba(196,164,107,0.1);animation:breathe 4s ease-in-out infinite}
+.sp-r1{width:440px;height:440px}.sp-r2{width:300px;height:300px;border-color:rgba(196,164,107,0.15);animation-delay:.5s}.sp-r3{width:180px;height:180px;border-color:rgba(196,164,107,0.22);animation-delay:1s}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.sp-logo{font-family:var(--serif);font-size:40px;font-weight:300;color:white;letter-spacing:.04em;position:relative;z-index:2;animation:fadeUp .8s .3s both}
+.sp-logo em{color:var(--gd);font-style:italic}
+.sp-bar{width:1px;height:28px;background:linear-gradient(to bottom,transparent,var(--gd),transparent);margin:14px auto;position:relative;z-index:2;animation:fadeUp .8s .5s both}
+.sp-tag{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);position:relative;z-index:2;animation:fadeUp .8s .7s both}
+.sp-btn{margin-top:52px;padding:13px 38px;border-radius:100px;background:var(--gd);border:none;color:var(--k);font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;position:relative;z-index:2;animation:fadeUp .8s .9s both;transition:all .2s}
+.sp-btn:hover{background:#D4B47B;transform:translateY(-1px)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* HOME */
+.hbody{padding:0 18px 100px}
+.greet{padding:8px 0 16px}
+.gt{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);font-weight:500;margin-bottom:4px}
+.gm{font-family:var(--serif);font-size:30px;font-weight:300;color:var(--k);line-height:1.1}
+.gm em{font-style:italic;color:var(--gd)}
+.decide-btn{width:100%;background:var(--k);border:none;border-radius:20px;padding:20px 20px 20px 22px;cursor:pointer;text-align:left;margin-bottom:18px;position:relative;overflow:hidden;transition:all .3s cubic-bezier(.16,1,.3,1)}
+.decide-btn::before{content:'';position:absolute;right:-20px;top:-20px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(196,164,107,.15),transparent 65%)}
+.decide-btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(24,23,15,.3)}
+.decide-btn:active{transform:scale(.99)}
+.d-ey{font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.25);display:block;margin-bottom:7px}
+.d-t{font-family:var(--serif);font-size:26px;font-weight:300;color:white;display:block;line-height:1.1}
+.d-t em{font-style:italic;color:var(--gd)}
+.d-s{font-size:10px;color:rgba(255,255,255,.22);display:block;margin-top:8px}
+.d-orb{position:absolute;right:18px;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;border:1px solid rgba(196,164,107,.25);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--gd);transition:all .3s}
+.decide-btn:hover .d-orb{background:rgba(196,164,107,.1);transform:translateY(-50%) rotate(20deg)}
+.slbl{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);font-weight:500;margin-bottom:12px}
+.qtiles{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px}
+.qt{background:var(--cr);border:.5px solid var(--bd);border-radius:16px;padding:14px 12px;cursor:pointer;transition:all .22s cubic-bezier(.16,1,.3,1)}
+.qt:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(24,23,15,.07)}
+.qt:active{transform:scale(.96)}
+.qt-ic{font-size:20px;margin-bottom:8px;display:block}
+.qt-n{font-family:var(--serif);font-size:15px;font-weight:400;color:var(--k);margin-bottom:2px}
+.qt-s{font-size:10px;color:var(--soft)}
+.qt.hi{background:var(--gdl);border-color:rgba(196,164,107,.2)}
+.home-sug{background:var(--cr);border:.5px solid var(--bd);border-radius:18px;padding:16px;margin-bottom:16px;cursor:pointer;transition:all .22s}
+.home-sug:hover{transform:translateY(-1px);border-color:var(--bd2)}
+.hs-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;background:var(--gdl);border:.5px solid rgba(196,164,107,.3);font-size:9px;color:var(--gdd);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:11px}
+.hs-n{font-family:var(--serif);font-size:20px;font-weight:400;color:var(--k);margin-bottom:3px}
+.hs-d{font-size:11px;color:var(--mid);line-height:1.5;margin-bottom:10px}
+.hs-ms{display:flex;gap:10px;flex-wrap:wrap}
+.hs-m{font-size:10px;color:var(--soft)}
+.mus-bloc{background:var(--k);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:11px;cursor:pointer;transition:all .2s}
+.mus-bloc:hover{transform:translateY(-1px)}
+.mus-art{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,#352B1A,#5A4525);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.mus-i{flex:1;min-width:0}
+.mus-l{font-size:7px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.25);font-weight:500;margin-bottom:2px}
+.mus-t{font-size:12px;font-weight:500;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mus-a{font-size:10px;color:rgba(255,255,255,.4)}
+.mus-v{font-size:9px;color:rgba(196,164,107,.7);margin-top:2px;font-style:italic;font-family:var(--serif)}
+.mus-p{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.07);border:.5px solid rgba(255,255,255,.1);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;color:var(--gd);transition:all .2s}
+.mus-p:hover{background:rgba(196,164,107,.2)}
+
+/* WHATNOW */
+.wn-head{padding:0 18px 16px;flex-shrink:0}
+.wn-t{font-family:var(--serif);font-size:32px;font-weight:300;color:var(--k);line-height:1.05;margin-bottom:5px}
+.wn-t em{font-style:italic;color:var(--gd)}
+.wn-s{font-size:11px;color:var(--soft);line-height:1.6}
+.wn-body{padding:0 18px 100px}
+.cg{margin-bottom:18px}
+.cg-l{font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--soft);font-weight:500;margin-bottom:10px;display:block}
+.chips{display:flex;gap:7px;flex-wrap:wrap}
+.chip{padding:8px 15px;border-radius:100px;border:1.5px solid var(--bd2);font-size:11px;font-weight:500;color:var(--mid);cursor:pointer;transition:all .2s;background:transparent;white-space:nowrap}
+.chip:hover{border-color:rgba(196,164,107,.5);color:var(--gdd)}
+.chip:active{transform:scale(.95)}
+.chip.on{background:var(--k);border-color:var(--k);color:white}
+.surp{width:100%;padding:14px;border-radius:14px;border:1.5px dashed var(--bd2);background:transparent;font-family:var(--serif);font-size:17px;font-weight:300;color:var(--mid);cursor:pointer;transition:all .22s;font-style:italic;margin-bottom:12px}
+.surp:hover{border-color:var(--gd);color:var(--gd);background:var(--gdl)}
+.surp:active{transform:scale(.98)}
+.go-btn{width:100%;padding:16px;border-radius:14px;background:var(--k);border:none;color:white;font-family:var(--serif);font-size:19px;font-weight:300;cursor:pointer;transition:all .22s}
+.go-btn em{font-style:italic;color:var(--gd)}
+.go-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(24,23,15,.25)}
+.go-btn:active{transform:scale(.99)}
+
+/* RESULT */
+.res-hero{background:var(--k);padding:16px 18px 22px;flex-shrink:0;position:relative;overflow:hidden}
+.res-hero::before{content:'';position:absolute;right:-30px;top:-30px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(196,164,107,.1),transparent 65%)}
+.res-tb{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.res-back{font-size:11px;color:rgba(255,255,255,.35);cursor:pointer;transition:color .2s}
+.res-back:hover{color:rgba(255,255,255,.7)}
+.res-acts{display:flex;gap:7px}
+.res-icb{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.06);border:.5px solid rgba(255,255,255,.1);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;color:rgba(255,255,255,.4);transition:all .2s}
+.res-icb:hover{background:rgba(255,255,255,.12);color:var(--gd)}
+.ai-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;background:rgba(196,164,107,.1);border:.5px solid rgba(196,164,107,.2);font-size:8px;color:var(--gd);font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.ai-dot{width:5px;height:5px;border-radius:50%;background:var(--gd);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
+.res-n{font-family:var(--serif);font-size:28px;font-weight:300;color:white;line-height:1.08;margin-bottom:5px}
+.res-n em{font-style:italic;color:var(--gd)}
+.res-adr{font-size:10px;color:rgba(255,255,255,.3);margin-bottom:12px}
+.res-pills{display:flex;gap:6px;flex-wrap:wrap}
+.res-pill{padding:4px 11px;border-radius:100px;background:rgba(255,255,255,.05);border:.5px solid rgba(255,255,255,.09);font-size:9px;color:rgba(255,255,255,.4)}
+.res-body{padding:16px 18px 100px}
+.ai-card{background:var(--cr);border-radius:16px;padding:14px;margin-bottom:11px;border:.5px solid var(--bd);position:relative}
+.ai-card::after{content:'✦';position:absolute;right:12px;top:11px;font-size:9px;color:var(--gd);opacity:.4}
+.aic-l{font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);font-weight:500;margin-bottom:8px}
+.aic-txt{font-family:var(--serif);font-size:14px;font-weight:300;color:var(--k);line-height:1.7;font-style:italic;min-height:18px}
+.aic-txt.streaming::after{content:'|';animation:blink .7s step-end infinite;color:var(--gd);font-style:normal}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:11px}
+.dc{background:var(--cr);border-radius:12px;padding:11px 12px;border:.5px solid var(--bd)}
+.dc-l{font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);font-weight:500;margin-bottom:2px}
+.dc-v{font-size:12px;font-weight:500;color:var(--k)}
+.out-card{background:var(--cr);border-radius:16px;padding:14px;margin-bottom:11px;border:.5px solid var(--bd)}
+.out-row{display:flex;gap:8px;margin-top:10px}
+.op{flex:1;background:var(--w);border-radius:10px;padding:10px 5px;text-align:center;border:.5px solid var(--bd)}
+.op-ic{font-size:20px;display:block;margin-bottom:4px}
+.op-nm{font-size:10px;font-weight:500;color:var(--k);line-height:1.3}
+.op-dt{font-size:9px;color:var(--soft)}
+.mus-res{background:var(--k);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:11px;margin-bottom:11px}
+.act-row{display:flex;gap:8px;margin-bottom:11px}
+.act{flex:1;padding:11px;border-radius:12px;border:1.5px solid var(--bd2);background:transparent;font-size:11px;font-weight:500;color:var(--mid);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px}
+.act:hover{border-color:var(--gd);color:var(--gdd);background:var(--gdl)}
+.act:active{transform:scale(.97)}
+.regen{width:100%;padding:13px;border-radius:14px;background:transparent;border:1.5px solid var(--bd2);color:var(--k);font-family:var(--serif);font-size:16px;font-weight:300;cursor:pointer;transition:all .22s;display:flex;align-items:center;justify-content:center;gap:8px;font-style:italic}
+.regen:hover{background:var(--cr)}
+.regen:active{transform:scale(.98)}
+
+/* TENUE */
+.tenue-body{padding:0 18px 100px}
+.ctx-c{background:var(--k);border-radius:16px;padding:14px 16px;margin-bottom:12px}
+.ctx-l{font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);font-weight:500;margin-bottom:7px}
+.ctx-pills{display:flex;gap:6px;flex-wrap:wrap}
+.ctx-p{padding:3px 10px;border-radius:100px;border:.5px solid rgba(255,255,255,.1);font-size:9px;color:rgba(255,255,255,.35)}
+.look-c{background:var(--cr);border-radius:18px;padding:16px;margin-bottom:11px;border:.5px solid var(--bd)}
+.lk-n{font-family:var(--serif);font-size:20px;font-weight:400;color:var(--k);margin-bottom:3px}
+.lk-n em{font-style:italic;color:var(--gd)}
+.lk-w{font-size:11px;color:var(--mid);font-style:italic;font-family:var(--serif);margin-bottom:13px;line-height:1.5}
+.pieces{display:flex;flex-direction:column;gap:8px}
+.pc{display:flex;align-items:center;gap:11px;padding:10px 11px;background:var(--w);border-radius:11px;border:.5px solid var(--bd);transition:all .2s}
+.pc:hover{border-color:var(--bd2);transform:translateX(2px)}
+.pc-ic{font-size:19px;width:30px;text-align:center;flex-shrink:0}
+.pc-b{flex:1}
+.pc-n{font-size:11px;font-weight:500;color:var(--k)}
+.pc-d{font-size:9px;color:var(--soft)}
+.pc-cat{padding:2px 8px;border-radius:100px;background:var(--gdl);font-size:8px;color:var(--gdd);font-weight:600;flex-shrink:0}
+
+/* SCAN */
+.scan-body{padding:0 18px 100px}
+.scan-z{border:1.5px dashed var(--bd2);border-radius:20px;padding:44px 20px;text-align:center;cursor:pointer;transition:all .22s;background:var(--cr);margin-bottom:14px}
+.scan-z:hover{border-color:var(--gd);background:var(--gdl);transform:scale(1.01)}
+.scan-z:active{transform:scale(.99)}
+.sz-ic{font-size:42px;display:block;margin-bottom:12px;opacity:.35}
+.sz-t{font-family:var(--serif);font-size:18px;font-weight:300;color:var(--mid);margin-bottom:4px}
+.sz-s{font-size:10px;color:var(--soft);line-height:1.5}
+.sr-card{background:var(--cr);border-radius:18px;padding:16px;border:.5px solid var(--bd);margin-bottom:12px}
+.sr-top{display:flex;gap:12px;margin-bottom:12px}
+.sr-img{width:70px;height:70px;border-radius:14px;background:linear-gradient(135deg,var(--cr),var(--gdl));display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0;border:.5px solid var(--bd)}
+.sr-n{font-family:var(--serif);font-size:19px;font-weight:400;margin-bottom:4px}
+.sr-st{font-size:9px;color:var(--gdd);font-weight:600;display:flex;align-items:center;gap:3px}
+.sr-attrs{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.sr-a{background:var(--w);border-radius:10px;padding:9px 11px;border:.5px solid var(--bd)}
+.sr-al{font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);font-weight:500;margin-bottom:1px}
+.sr-av{font-size:12px;font-weight:500;color:var(--k)}
+.add-btn{width:100%;padding:13px;border-radius:13px;background:var(--k);border:none;color:white;font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;letter-spacing:.05em;transition:all .2s;text-transform:uppercase}
+.add-btn:hover{background:var(--k2)}
+.add-btn:active{transform:scale(.98)}
+
+/* DRESSING */
+.dressing-body{padding:0 18px 100px}
+.fbar{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;margin-bottom:16px}
+.fbar::-webkit-scrollbar{display:none}
+.fchip{padding:7px 14px;border-radius:100px;border:1.5px solid var(--bd2);font-size:11px;font-weight:500;color:var(--mid);cursor:pointer;white-space:nowrap;transition:all .2s;background:transparent;flex-shrink:0}
+.fchip:active{transform:scale(.94)}
+.fchip.on{background:var(--k);border-color:var(--k);color:white}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cc{background:var(--cr);border-radius:16px;overflow:hidden;border:.5px solid var(--bd);cursor:pointer;transition:all .22s}
+.cc:hover{transform:translateY(-2px);border-color:var(--bd2)}
+.cc:active{transform:scale(.97)}
+.cc-img{height:118px;display:flex;align-items:center;justify-content:center;font-size:44px}
+.cc-info{padding:9px 11px 12px}
+.cc-n{font-size:11px;font-weight:600;color:var(--k);margin-bottom:2px}
+.cc-d{font-size:9px;color:var(--soft)}
+
+/* DAILY MATCH */
+.dm-hero{background:var(--k);padding:16px 18px 24px;flex-shrink:0;position:relative;overflow:hidden}
+.dm-d1{position:absolute;right:-15px;bottom:-15px;width:130px;height:130px;border-radius:50%;border:1px solid rgba(196,164,107,.1)}
+.dm-d2{position:absolute;right:15px;bottom:5px;width:70px;height:70px;border-radius:50%;border:1px solid rgba(196,164,107,.07)}
+.dm-date{font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.25);font-weight:500;margin-bottom:9px}
+.dm-title{font-family:var(--serif);font-size:30px;font-weight:300;color:white;line-height:1.05;margin-bottom:5px}
+.dm-title em{font-style:italic;color:var(--gd)}
+.dm-ph{font-size:11px;color:rgba(255,255,255,.25);font-style:italic;font-family:var(--serif);margin-bottom:12px;line-height:1.5}
+.dm-ctx{display:flex;gap:6px;flex-wrap:wrap}
+.dm-cp{padding:3px 10px;border-radius:100px;border:.5px solid rgba(255,255,255,.1);font-size:9px;color:rgba(255,255,255,.35)}
+.dm-body{padding:13px 18px 100px}
+.dm-card{background:var(--cr);border-radius:16px;padding:14px;margin-bottom:10px;border:.5px solid var(--bd);cursor:pointer;transition:all .2s}
+.dm-card:hover{transform:translateY(-1px);border-color:var(--bd2)}
+.dm-card:active{transform:scale(.99)}
+.dmc-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.dmc-l{font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);font-weight:500}
+.dmc-b{padding:2px 9px;border-radius:100px;background:var(--gdl);font-size:8px;color:var(--gdd);font-weight:600}
+.dmc-n{font-family:var(--serif);font-size:19px;font-weight:400;color:var(--k);margin-bottom:3px}
+.dmc-n em{font-style:italic;color:var(--gd)}
+.dmc-s{font-size:10px;color:var(--mid);margin-bottom:4px}
+.dmc-w{font-size:10px;color:var(--soft);font-style:italic;font-family:var(--serif);line-height:1.5}
+
+/* PROFIL */
+.profil-body{padding:0 18px 100px}
+.pav{width:70px;height:70px;border-radius:50%;background:var(--gdl);border:2px solid var(--gd);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:26px;font-weight:300;color:var(--gdd);margin:12px auto 10px}
+.p-n{font-family:var(--serif);font-size:21px;font-weight:300;color:var(--k);text-align:center;margin-bottom:2px}
+.p-s{font-size:10px;color:var(--soft);text-align:center;margin-bottom:18px}
+.prem-b{background:var(--k);border-radius:18px;padding:16px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:10px;position:relative;overflow:hidden}
+.prem-b::before{content:'';position:absolute;right:-15px;top:-15px;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,rgba(196,164,107,.12),transparent 70%)}
+.pt-t{font-family:var(--serif);font-size:17px;font-weight:300;color:white;margin-bottom:2px}
+.pt-s{font-size:9px;color:rgba(255,255,255,.3);line-height:1.4}
+.prem-cta{padding:9px 16px;border-radius:100px;background:var(--gd);border:none;color:var(--k);font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;letter-spacing:.05em;text-transform:uppercase}
+.psec{margin-bottom:16px}
+.psec-t{font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);font-weight:500;margin-bottom:8px}
+.pi{display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:var(--cr);border-radius:12px;margin-bottom:5px;border:.5px solid var(--bd);cursor:pointer;transition:all .2s}
+.pi:hover{border-color:var(--bd2);transform:translateX(1px)}
+.pi-l{font-size:12px;font-weight:500;color:var(--k)}
+.pi-v{font-size:10px;color:var(--mid);display:flex;align-items:center;gap:4px}
+
+/* LOADING */
+.lov{position:absolute;inset:0;background:rgba(254,253,251,.93);backdrop-filter:blur(6px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;z-index:500;opacity:0;pointer-events:none;transition:opacity .3s;border-radius:44px}
+.lov.show{opacity:1;pointer-events:all}
+.l-ring{width:36px;height:36px;border:1.5px solid var(--cr);border-top-color:var(--gd);border-radius:50%;animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.l-txt{font-family:var(--serif);font-size:15px;font-weight:300;color:var(--mid);font-style:italic;text-align:center;max-width:180px;line-height:1.5}
+.toast-el{position:absolute;bottom:100px;left:16px;right:16px;background:var(--k);color:white;padding:11px 14px;border-radius:11px;font-size:11px;font-weight:500;z-index:600;transform:translateY(14px);opacity:0;transition:all .3s cubic-bezier(.16,1,.3,1);text-align:center;letter-spacing:.04em}
+.toast-el.show{transform:translateY(0);opacity:1}
+.page-ey{font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--soft);font-weight:500;margin-bottom:4px}
+.page-t{font-family:var(--serif);font-size:26px;font-weight:300;color:var(--k);line-height:1.1;margin-bottom:3px}
+.page-t em{font-style:italic;color:var(--gd)}
+</style>
+
+<div style="display:flex;justify-content:center;align-items:center;min-height:600px;background:#111;border-radius:12px;padding:20px">
+<div class="phone" id="ph">
+<div class="lov" id="lov"><div class="l-ring"></div><div class="l-txt" id="ltxt">Un instant…</div></div>
+<div class="toast-el" id="toast"></div>
+
+<!-- SPLASH -->
+<div class="screen active" id="sp">
+<div class="sp-wrap">
+  <div class="sp-ring sp-r1"></div><div class="sp-ring sp-r2"></div><div class="sp-ring sp-r3"></div>
+  <div class="sp-logo">Daily<em>Match</em></div>
+  <div class="sp-bar"></div>
+  <div class="sp-tag">Quoi faire, sans réfléchir.</div>
+  <button class="sp-btn" onclick="G('home')">Commencer</button>
+</div>
+</div>
+
+<!-- HOME -->
+<div class="screen" id="home">
+<div class="sb dk"><span>9:41</span><span>●●●</span></div>
+<div class="topbar"><div class="logo">Daily<em>Match</em></div><div class="ava" onclick="G('profil')">L</div></div>
+<div class="scr hbody">
+  <div class="greet"><div class="gt" id="gt-sub">Jeudi matin · 23 Avril</div><div class="gm">Bonjour, <em>Léa</em></div></div>
+  <button class="decide-btn" onclick="doDecide()">
+    <span class="d-ey">Moteur de décision IA</span>
+    <span class="d-t">Décide <em>pour moi</em></span>
+    <span class="d-s">Tenue · Restaurant · Plan · Musique</span>
+    <div class="d-orb">✦</div>
+  </button>
+  <div class="slbl">Explorer</div>
+  <div class="qtiles">
+    <div class="qt hi" onclick="G('wn')"><span class="qt-ic">⚡</span><div class="qt-n">WhatNow</div><div class="qt-s">Décision rapide</div></div>
+    <div class="qt" onclick="G('sortir')"><span class="qt-ic">🌙</span><div class="qt-n">Sortir</div><div class="qt-s">Bars · Lieux</div></div>
+    <div class="qt" onclick="G('manger')"><span class="qt-ic">🍽</span><div class="qt-n">Manger</div><div class="qt-s">Restaurant précis</div></div>
+    <div class="qt" onclick="G('tenue')"><span class="qt-ic">👗</span><div class="qt-n">Tenue</div><div class="qt-s">Look du moment</div></div>
+  </div>
+  <div class="slbl">Suggestion du moment</div>
+  <div class="home-sug" onclick="G('result')">
+    <div class="hs-tag">✦ Sélection du jour</div>
+    <div class="hs-n">Café de la Paix</div>
+    <div class="hs-d">Un classique parisien hors du temps. Grande terrasse, plafonds haussmanniens. Pour un après-midi parfait.</div>
+    <div class="hs-ms"><span class="hs-m">📍 Opéra</span><span class="hs-m">€€€</span><span class="hs-m">⏱ Idéal maintenant</span></div>
+  </div>
+  <div class="slbl">Musique du moment</div>
+  <div class="mus-bloc">
+    <div class="mus-art">♪</div>
+    <div class="mus-i"><div class="mus-l">En ce moment</div><div class="mus-t">November</div><div class="mus-a">Max Richter</div><div class="mus-v">Parfait pour ce matin doux</div></div>
+    <button class="mus-p" onclick="event.stopPropagation();showToast('▶ Spotify')">▶</button>
+  </div>
+</div>
+<div class="bnav" id="h-nav"></div>
+</div>
+
+<!-- WHATNOW -->
+<div class="screen" id="wn">
+<div class="sb dk"><span>9:41</span><span>●●●</span></div>
+<div class="topbar"><button onclick="GB()" style="background:none;border:none;font-size:17px;cursor:pointer;color:var(--mid)">←</button><div class="logo">Daily<em>Match</em></div><div style="width:30px"></div></div>
+<div class="wn-head"><div class="wn-t">What<em>Now</em> ?</div><div class="wn-s">Dis-moi ton moment. Je décide pour toi.</div></div>
+<div class="scr wn-body">
+  <div class="cg"><span class="cg-l">Ton mood</span><div class="chips" id="c-mood"><div class="chip" onclick="pickC(this,'c-mood')">Chill</div><div class="chip" onclick="pickC(this,'c-mood')">Social</div><div class="chip" onclick="pickC(this,'c-mood')">Date</div><div class="chip" onclick="pickC(this,'c-mood')">Solo</div></div></div>
+  <div class="cg"><span class="cg-l">Ton budget</span><div class="chips" id="c-bud"><div class="chip" onclick="pickC(this,'c-bud')">€</div><div class="chip" onclick="pickC(this,'c-bud')">€€</div><div class="chip" onclick="pickC(this,'c-bud')">€€€</div></div></div>
+  <div class="cg"><span class="cg-l">Ton temps</span><div class="chips" id="c-tps"><div class="chip" onclick="pickC(this,'c-tps')">1h</div><div class="chip" onclick="pickC(this,'c-tps')">2–3h</div><div class="chip" onclick="pickC(this,'c-tps')">Soirée</div></div></div>
+  <button class="surp" onclick="doSurprise()">Surprends-moi ✦</button>
+  <button class="go-btn" onclick="doWhatNow()">Trouver mon <em>plan</em></button>
+</div>
+<div class="bnav" id="wn-nav"></div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="result">
+<div class="res-hero">
+  <div class="res-tb">
+    <div class="res-back" onclick="GB()">← Retour</div>
+    <div class="res-acts">
+      <button class="res-icb" onclick="showToast('Enregistré ✓')">♡</button>
+      <button class="res-icb" onclick="showToast('Lien copié ✓')">↗</button>
+    </div>
+  </div>
+  <div class="ai-tag"><div class="ai-dot"></div>Généré par IA</div>
+  <div class="res-n" id="res-n">Café de <em>la Paix</em></div>
+  <div class="res-adr" id="res-adr">5 Place de l'Opéra · 9ème</div>
+  <div class="res-pills" id="res-pills"><div class="res-pill">€€€</div><div class="res-pill">Café</div><div class="res-pill">Ouvert</div><div class="res-pill">~2h</div></div>
+</div>
+<div class="scr res-body">
+  <div class="ai-card"><div class="aic-l">Pourquoi ce lieu maintenant</div><div class="aic-txt" id="ai-why">Un classique parisien hors du temps. Terrasse, service attentionné, lumière parfaite.</div></div>
+  <div class="dgrid">
+    <div class="dc"><div class="dc-l">Quartier</div><div class="dc-v" id="r-qrt">Opéra · 9ème</div></div>
+    <div class="dc"><div class="dc-l">Budget</div><div class="dc-v" id="r-bud">€€€ · ~35€/p</div></div>
+    <div class="dc"><div class="dc-l">Durée</div><div class="dc-v" id="r-dur">~2h</div></div>
+    <div class="dc"><div class="dc-l">Moment</div><div class="dc-v" id="r-mom">Idéal maintenant</div></div>
+  </div>
+  <div class="out-card">
+    <div class="aic-l">Tenue recommandée</div>
+    <div class="out-row" id="r-outfit">
+      <div class="op"><span class="op-ic">🥼</span><div class="op-nm">Blazer beige</div><div class="op-dt">& Other Stories</div></div>
+      <div class="op"><span class="op-ic">👖</span><div class="op-nm">Jean slim</div><div class="op-dt">Bleu nuit</div></div>
+      <div class="op"><span class="op-ic">👠</span><div class="op-nm">Ballerines</div><div class="op-dt">Nude</div></div>
+    </div>
+  </div>
+  <div class="mus-res">
+    <div class="mus-art">♪</div>
+    <div class="mus-i"><div class="mus-l">Musique du moment</div><div class="mus-t" id="r-mus">November · Max Richter</div><div class="mus-v" id="r-mvi">Parfait pour ce plan</div></div>
+    <button class="mus-p" onclick="showToast('▶ Spotify')">▶</button>
+  </div>
+  <div class="act-row">
+    <button class="act" onclick="showToast('Enregistré ✓')">♡ Sauver</button>
+    <button class="act" onclick="showToast('Lien copié ✓')">↗ Partager</button>
+  </div>
+  <button class="regen" onclick="doRegen()"><span>↻</span> <em>Voir une autre idée</em></button>
+</div>
+<div class="bnav" id="res-nav"></div>
+</div>
+
+<!-- SORTIR -->
+<div class="screen" id="sortir">
+<div style="background:var(--k2);padding:14px 18px 20px;flex-shrink:0">
+  <div class="sb lt" style="padding:0 0 12px"><span>9:41</span><span>●●●</span></div>
+  <div style="font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.25);font-weight:500;margin-bottom:7px">Décision · Sortir</div>
+  <div style="font-family:var(--serif);font-size:28px;font-weight:300;color:white;line-height:1.05;margin-bottom:3px">Ce soir à <em style="color:var(--gd)">Paris</em></div>
+  <div style="font-size:10px;color:rgba(255,255,255,.25);font-style:italic;font-family:var(--serif)">Une sélection. Précise. Choisie pour toi.</div>
+</div>
+<div class="scr" style="padding:14px 18px 100px">
+  <div style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;background:rgba(196,164,107,.1);border:.5px solid rgba(196,164,107,.2);font-size:8px;color:var(--gd);font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px"><div class="ai-dot"></div>Suggestion IA</div>
+  <div style="background:var(--cr);border-radius:18px;overflow:hidden;border:.5px solid var(--bd);margin-bottom:12px;cursor:pointer;transition:all .22s" onclick="G('result')" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+    <div style="padding:16px">
+      <div style="font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--gdd);font-weight:600;margin-bottom:8px">Bar à cocktails · Haut-Marais</div>
+      <div style="font-family:var(--serif);font-size:23px;font-weight:400;color:var(--k);margin-bottom:4px">Little <em style="color:var(--gd)">Red Door</em></div>
+      <div style="font-size:11px;color:var(--mid);line-height:1.5;margin-bottom:11px">Bar culte du Haut-Marais. Cocktails signature créatifs, ambiance tamisée et sophistiquée. L'un des meilleurs bars de Paris.</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap">
+        <div style="padding:4px 11px;border-radius:100px;background:var(--gdl);border:.5px solid rgba(196,164,107,.3);font-size:9px;color:var(--gdd);font-weight:500">€€€</div>
+        <div style="padding:4px 11px;border-radius:100px;background:var(--w);border:.5px solid var(--bd2);font-size:9px;color:var(--mid)">Ouvert dès 19h</div>
+        <div style="padding:4px 11px;border-radius:100px;background:var(--w);border:.5px solid var(--bd2);font-size:9px;color:var(--mid)">60 rue Charlot · 3ème</div>
+      </div>
+    </div>
+    <div style="background:var(--w);padding:10px 16px;border-top:.5px solid var(--bd);display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <div style="font-size:10px;color:var(--soft);font-style:italic;font-family:var(--serif);flex:1;line-height:1.4">"Choisi pour ton mood chill et la qualité exceptionnelle."</div>
+      <button onclick="event.stopPropagation();G('result')" style="padding:6px 14px;border-radius:100px;background:var(--k);color:white;border:none;font-size:10px;font-weight:600;cursor:pointer;flex-shrink:0">Voir →</button>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:18px">
+    <button onclick="doRegenSortir()" style="flex:1;padding:11px;border-radius:12px;border:1.5px solid var(--bd2);background:transparent;font-family:var(--serif);font-size:14px;font-weight:300;color:var(--mid);cursor:pointer;font-style:italic;transition:all .2s">↻ Autre idée</button>
+    <button onclick="G('wn')" style="flex:1;padding:11px;border-radius:12px;border:1.5px solid var(--bd2);background:transparent;font-size:11px;font-weight:500;color:var(--mid);cursor:pointer;transition:all .2s">Changer le mood</button>
+  </div>
+</div>
+<div class="bnav" id="sortir-nav"></div>
+</div>
+
+<!-- MANGER -->
+<div class="screen" id="manger">
+<div style="background:var(--k);padding:14px 18px 20px;flex-shrink:0;position:relative;overflow:hidden">
+  <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(196,164,107,.08),transparent 70%)"></div>
+  <div class="sb lt" style="padding:0 0 12px"><span>9:41</span><span>●●●</span></div>
+  <div style="font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.25);font-weight:500;margin-bottom:7px">Décision · Manger</div>
+  <div style="font-family:var(--serif);font-size:28px;font-weight:300;color:white;line-height:1.05;margin-bottom:3px">Déjeuner <em style="color:var(--gd)">maintenant</em></div>
+  <div style="font-size:10px;color:rgba(255,255,255,.25);font-style:italic;font-family:var(--serif)">Un restaurant. Précis. Ouvert. Pour toi.</div>
+</div>
+<div class="scr" style="padding:14px 18px 100px">
+  <div style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;background:rgba(196,164,107,.1);border:.5px solid rgba(196,164,107,.2);font-size:8px;color:var(--gd);font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px"><div class="ai-dot"></div>Suggestion IA</div>
+  <div style="background:var(--cr);border-radius:18px;overflow:hidden;border:.5px solid var(--bd);margin-bottom:12px;cursor:pointer" onclick="G('result')">
+    <div style="padding:16px">
+      <div style="font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--gdd);font-weight:600;margin-bottom:8px">Bistrot · Cuisine française · Marais</div>
+      <div style="font-family:var(--serif);font-size:23px;font-weight:400;color:var(--k);margin-bottom:4px">Chez <em style="color:var(--gd)">Janou</em></div>
+      <div style="font-size:11px;color:var(--mid);line-height:1.5;margin-bottom:11px">Le bistrot provençal par excellence. Produits de saison, service chaleureux, mousse au chocolat légendaire.</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap">
+        <div style="padding:4px 11px;border-radius:100px;background:var(--gdl);border:.5px solid rgba(196,164,107,.3);font-size:9px;color:var(--gdd)">€€</div>
+        <div style="padding:4px 11px;border-radius:100px;background:var(--w);border:.5px solid var(--bd2);font-size:9px;color:var(--mid)">Service déjeuner</div>
+        <div style="padding:4px 11px;border-radius:100px;background:var(--w);border:.5px solid var(--bd2);font-size:9px;color:var(--mid)">2 rue Roger Verlomme</div>
+      </div>
+    </div>
+    <div style="background:var(--w);padding:10px 16px;border-top:.5px solid var(--bd);display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <div style="font-size:10px;color:var(--soft);font-style:italic;font-family:var(--serif);flex:1">"Accord parfait avec ton budget et le service du déjeuner."</div>
+      <button onclick="event.stopPropagation();G('result')" style="padding:6px 14px;border-radius:100px;background:var(--k);color:white;border:none;font-size:10px;font-weight:600;cursor:pointer">Voir →</button>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <button onclick="doAIManger()" style="flex:1;padding:11px;border-radius:12px;border:1.5px solid var(--bd2);background:transparent;font-family:var(--serif);font-size:14px;font-weight:300;color:var(--mid);cursor:pointer;font-style:italic">↻ Autre idée IA</button>
+    <button style="flex:1;padding:11px;border-radius:12px;border:1.5px solid var(--bd2);background:transparent;font-size:11px;font-weight:500;color:var(--mid);cursor:pointer">Changer budget</button>
+  </div>
+</div>
+<div class="bnav" id="manger-nav"></div>
+</div>
+
+<!-- TENUE -->
+<div class="screen" id="tenue">
+<div class="sb dk"><span>9:41</span><span>●●●</span></div>
+<div class="topbar"><button onclick="GB()" style="background:none;border:none;font-size:17px;cursor:pointer;color:var(--mid)">←</button><div class="logo">Daily<em>Match</em></div><div style="width:30px"></div></div>
+<div class="scr tenue-body">
+  <div><div class="page-ey">Tenue du moment</div><div class="page-t">Ton <em>look</em> maintenant</div></div>
+  <div style="height:12px"></div>
+  <div class="ctx-c"><div class="ctx-l">Contexte</div><div class="ctx-pills"><div class="ctx-p">☀ 18°C</div><div class="ctx-p">Après-midi</div><div class="ctx-p">Style Chic</div><div class="ctx-p">Terrasse</div></div></div>
+  <div class="ai-card" style="margin-bottom:11px"><div class="aic-l">Analyse IA</div><div class="aic-txt" id="tenue-ai">Météo printanière idéale pour un blazer léger. Ton dressing contient les pièces parfaites pour ce contexte.</div></div>
+  <div class="look-c">
+    <div class="lk-n">Casual <em>Parisien</em></div>
+    <div class="lk-w">"Équilibre parfait entre confort et élégance pour cette journée douce."</div>
+    <div class="pieces">
+      <div class="pc"><div class="pc-ic">🥼</div><div class="pc-b"><div class="pc-n">Blazer structuré beige</div><div class="pc-d">& Other Stories · Camel</div></div><div class="pc-cat">Veste</div></div>
+      <div class="pc"><div class="pc-ic">👕</div><div class="pc-b"><div class="pc-n">T-shirt blanc col rond</div><div class="pc-d">Baserange · Coton bio</div></div><div class="pc-cat">Haut</div></div>
+      <div class="pc"><div class="pc-ic">👖</div><div class="pc-b"><div class="pc-n">Jean slim bleu nuit</div><div class="pc-d">Sézane · Taille haute</div></div><div class="pc-cat">Bas</div></div>
+      <div class="pc"><div class="pc-ic">👠</div><div class="pc-b"><div class="pc-n">Ballerines nude</div><div class="pc-d">Repetto · Cuir naturel</div></div><div class="pc-cat">Shoes</div></div>
+    </div>
+  </div>
+  <button class="regen" onclick="doAITenue()"><span>↻</span> <em>Générer un autre look IA</em></button>
+</div>
+<div class="bnav" id="tenue-nav"></div>
+</div>
+
+<!-- SCAN -->
+<div class="screen" id="scan">
+<div class="sb dk"><span>9:41</span><span>●●●</span></div>
+<div class="topbar"><div style="width:30px"></div><div class="logo">Daily<em>Match</em></div><div style="width:30px"></div></div>
+<div class="scr scan-body">
+  <div class="page-ey">Analyser</div><div class="page-t">Scanner un <em>vêtement</em></div>
+  <div style="height:14px"></div>
+  <div class="scan-z" id="sz" onclick="doScan()">
+    <span class="sz-ic">📷</span>
+    <div class="sz-t">Photo ou galerie</div>
+    <div class="sz-s">Prenez une photo pour analyser<br>et ajouter au dressing</div>
+  </div>
+  <div id="sr" style="display:none">
+    <div class="sr-card">
+      <div class="sr-top"><div class="sr-img">🥼</div><div><div class="sr-n">Blazer structuré</div><div class="sr-st">✦ Analyse IA complète</div></div></div>
+      <div class="ai-card" style="margin-bottom:11px"><div class="aic-l">Analyse IA</div><div class="aic-txt" id="scan-ai">Veste structurée coupe tailored. Tissu laine mélangée, finitions soignées. Polyvalente, idéale en mi-saison.</div></div>
+      <div class="sr-attrs">
+        <div class="sr-a"><div class="sr-al">Type</div><div class="sr-av">Veste</div></div>
+        <div class="sr-a"><div class="sr-al">Couleur</div><div class="sr-av">Beige camel</div></div>
+        <div class="sr-a"><div class="sr-al">Style</div><div class="sr-av">Casual chic</div></div>
+        <div class="sr-a"><div class="sr-al">Saison</div><div class="sr-av">Mi-saison</div></div>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+        <div style="padding:2px 9px;border-radius:100px;background:var(--gdl);border:.5px solid rgba(196,164,107,.3);font-size:9px;color:var(--gdd);font-weight:600">✦ Validé</div>
+        <div style="padding:2px 9px;border-radius:100px;background:var(--cr);border:.5px solid var(--bd2);font-size:9px;color:var(--mid)">Taille M</div>
+        <div style="padding:2px 9px;border-radius:100px;background:var(--cr);border:.5px solid var(--bd2);font-size:9px;color:var(--mid)">&amp; Other Stories</div>
+      </div>
+    </div>
+    <button class="add-btn" onclick="showToast('Ajouté au dressing ✓')">Ajouter au dressing</button>
+  </div>
+</div>
+<div class="bnav" id="scan-nav"></div>
+</div>
+
+<!-- DRESSING -->
+<div class="screen" id="dressing">
+<div class="sb dk"><span>9:41</span><span>●●●</span></div>
+<div class="topbar"><div class="logo">Daily<em>Match</em></div><button onclick="G('scan')" style="padding:6px 12px;border-radius:100px;background:var(--gdl);border:.5px solid rgba(196,164,107,.3);font-size:10px;font-weight:600;color:var(--gdd);cursor:pointer">+ Ajouter</button></div>
+<div class="scr dressing-body">
+  <div class="page-t">Mon <em>Dressing</em></div>
+  <div style="height:14px"></div>
+  <div class="fbar">
+    <div class="fchip on" onclick="pickF(this)">Tout (24)</div>
+    <div class="fchip" onclick="pickF(this)">Hauts (8)</div>
+    <div class="fchip" onclick="pickF(this)">Bas (6)</div>
+    <div class="fchip" onclick="pickF(this)">Vestes (4)</div>
+    <div class="fchip" onclick="pickF(this)">Shoes (4)</div>
+    <div class="fchip" onclick="pickF(this)">Accessoires</div>
+  </div>
+  <div class="cgrid">
+    <div class="cc"><div class="cc-img" style="background:linear-gradient(135deg,#EDE8DF,#D4C4A8)">🥼</div><div class="cc-info"><div class="cc-n">Blazer Beige</div><div class="cc-d">Veste · Camel · M</div></div></div>
+    <div class="cc"><div class="cc-img" style="background:linear-gradient(135deg,#CDD0DC,#A8ADBD)">👖</div><div class="cc-info"><div class="cc-n">Jean Slim</div><div class="cc-d">Bas · Bleu nuit · 38</div></div></div>
+    <div class="cc"><div class="cc-img" style="background:linear-gradient(135deg,#F0EDE8,#E2DDD5)">👗</div><div class="cc-info"><div class="cc-n">Robe lin écrue</div><div class="cc-d">Robe · Écru · S/M</div></div></div>
+    <div class="cc"><div class="cc-img" style="background:linear-gradient(135deg,#2C2C2A,#444440)">🧥</div><div class="cc-info"><div class="cc-n">Trench noir</div><div class="cc-d">Manteau · Noir · M</div></div></div>
+    <div class="cc"><div class="cc-img" style="background:linear-gradient(135deg,#F5EFE4,#E8DDD0)">👠</div><div class="cc-info"><div class="cc-n">Ballerines nude</div><div class="cc-d">Chaussures · 38</div></div></div>
+    <div class="cc"><div class="cc-img" style="background:linear-gradient(135deg,#E8E0D5,#D4C8B8)">👜</div><div class="cc-info"><div class="cc-n">Tote Polène</div><div class="cc-d">Sac · Naturel</div></div></div>
+    <div class="cc"><div class="cc-img" style="background:linear-gradient(135deg,#F0F0EE,#E0DFDC)">👕</div><div class="cc-info"><div class="cc-n">T-shirt blanc</div><div class="cc-d">Haut · Blanc · S</div></div></div>
+    <div class="cc"><div class="cc-img" style="background:linear-gradient(135deg,#D8C8B4,#C4B09A)">🥿</div><div class="cc-info"><div class="cc-n">Mocassins camel</div><div class="cc-d">Chaussures · 37</div></div></div>
+  </div>
+</div>
+<div class="bnav" id="dressing-nav"></div>
+</div>
+
+<!-- DAILY MATCH -->
+<div class="screen" id="dm">
+<div class="dm-hero">
+  <div class="dm-d1"></div><div class="dm-d2"></div>
+  <div class="sb lt" style="padding:0 0 12px"><span>9:41</span><span>●●●</span></div>
+  <div class="dm-date">Jeudi · 23 Avril · Paris · ☀ 18°C</div>
+  <div class="dm-title">Votre <em>Daily</em><br>Match</div>
+  <div class="dm-ph">"Une journée parfaitement orchestrée pour toi."</div>
+  <div class="dm-ctx"><div class="dm-cp">☀ 18°C · Doux</div><div class="dm-cp">Style Chic</div><div class="dm-cp">Budget €€</div><div class="dm-cp">IA Active</div></div>
+</div>
+<div class="scr dm-body">
+  <div style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;background:rgba(196,164,107,.1);border:.5px solid rgba(196,164,107,.2);font-size:8px;color:var(--gd);font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px"><div class="ai-dot"></div>Journée générée par IA</div>
+  <div class="dm-card" onclick="G('tenue')"><div class="dmc-h"><div class="dmc-l">👗 Tenue du jour</div><div class="dmc-b">Votre dressing</div></div><div class="dmc-n">Casual <em>Parisien</em></div><div class="dmc-s">Blazer beige · Jean slim · Ballerines nude</div><div class="dmc-w">"Équilibre parfait pour cette journée printanière."</div></div>
+  <div class="dm-card" onclick="G('result')"><div class="dmc-h"><div class="dmc-l">🍽 Déjeuner</div><div class="dmc-b">€€ · Ouvert</div></div><div class="dmc-n">Chez <em>Janou</em></div><div class="dmc-s">Bistrot · Marais · 2 rue Roger Verlomme</div><div class="dmc-w">"Bistrot provençal parfait pour ce jeudi ensoleillé."</div></div>
+  <div class="dm-card" onclick="G('result')"><div class="dmc-h"><div class="dmc-l">🌙 Ce soir</div><div class="dmc-b">€€€ · Marais</div></div><div class="dmc-n">Little <em>Red Door</em></div><div class="dmc-s">Bar · 60 rue Charlot · 3ème</div><div class="dmc-w">"Meilleur bar cocktails de Paris pour finir cette belle journée."</div></div>
+  <div class="dm-card"><div class="dmc-h"><div class="dmc-l">♪ Musique</div><div class="dmc-b">Mood · Doux</div></div><div style="display:flex;align-items:center;gap:10px"><div style="width:40px;height:40px;border-radius:10px;background:var(--k);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">♪</div><div><div style="font-size:13px;font-weight:500;color:var(--k)">November</div><div style="font-size:10px;color:var(--mid)">Max Richter</div><div style="font-size:9px;color:var(--gdd);margin-top:2px;font-style:italic;font-family:var(--serif)">Parfait pour cette journée douce</div></div></div></div>
+  <button class="regen" onclick="doAIDailyMatch()"><span>↻</span> <em>Régénérer ma journée IA</em></button>
+</div>
+<div class="bnav" id="dm-nav"></div>
+</div>
+
+<!-- PROFIL -->
+<div class="screen" id="profil">
+<div class="sb dk"><span>9:41</span><span>●●●</span></div>
+<div class="topbar"><div class="logo">Daily<em>Match</em></div><button style="padding:6px 12px;border-radius:100px;background:var(--cr);border:.5px solid var(--bd2);font-size:10px;font-weight:500;color:var(--mid);cursor:pointer">Modifier</button></div>
+<div class="scr profil-body">
+  <div class="pav">L</div>
+  <div class="p-n">Léa Fontaine</div>
+  <div class="p-s">Paris · Membre depuis mars 2024</div>
+  <div class="prem-b"><div><div class="pt-t">Passer à Premium</div><div class="pt-s">Suggestions illimitées<br>IA avancée · Historique</div></div><button class="prem-cta">9,99€/mois</button></div>
+  <div class="psec"><div class="psec-t">Profil</div>
+    <div class="pi"><div class="pi-l">Style</div><div class="pi-v">Chic ›</div></div>
+    <div class="pi"><div class="pi-l">Rythme de vie</div><div class="pi-v">Actif ›</div></div>
+    <div class="pi"><div class="pi-l">Sorties</div><div class="pi-v">Chill ›</div></div>
+  </div>
+  <div class="psec"><div class="psec-t">Préférences</div>
+    <div class="pi"><div class="pi-l">Budget moyen</div><div class="pi-v">€€ ›</div></div>
+    <div class="pi"><div class="pi-l">Localisation</div><div class="pi-v">Paris, France ›</div></div>
+    <div class="pi"><div class="pi-l">Notifications</div><div class="pi-v">8h00 · Quotidien ›</div></div>
+  </div>
+  <div class="psec"><div class="psec-t">Historique récent</div>
+    <div class="pi"><div class="pi-l">Little Red Door</div><div class="pi-v" style="font-size:9px">Hier soir ›</div></div>
+    <div class="pi"><div class="pi-l">Chez Janou</div><div class="pi-v" style="font-size:9px">Mer. déj. ›</div></div>
+  </div>
+  <div class="psec"><div class="psec-t">Compte</div>
+    <div class="pi"><div class="pi-l">Paramètres</div><div class="pi-v">›</div></div>
+    <div class="pi"><div class="pi-l" style="color:var(--soft)">Se déconnecter</div><div></div></div>
+  </div>
+</div>
+<div class="bnav" id="profil-nav"></div>
+</div>
+
+</div><!-- /phone -->
+</div>
+
+<script>
+const NAV=[{id:'home',ic:'🏠',lbl:'Accueil'},{id:'scan',ic:'📷',lbl:'Scanner'},{id:'dressing',ic:'👗',lbl:'Dressing'},{id:'dm',ic:'✦',lbl:'Match'},{id:'wn',ic:'⚡',lbl:'WhatNow'},{id:'profil',ic:'👤',lbl:'Profil'}];
+const BNAV_IDS=['home','wn','sortir','manger','tenue','scan','dressing','dm','result','profil'];
+
+function buildNavs(){
+  BNAV_IDS.forEach(sid=>{
+    const el=document.getElementById(sid+'-nav')||document.getElementById(sid.replace('result','res')+'-nav');
+    const el2=document.getElementById('res-nav');
+    const target=sid==='result'?el2:el;
+    if(!target)return;
+    target.innerHTML=NAV.map(n=>`<div class="nb ${n.id===sid?'on':''}" onclick="G('${n.id}')"><div class="nb-ic">${n.ic}</div><div class="nb-pip"></div><div class="nb-lbl">${n.lbl}</div></div>`).join('');
+  });
+}
+
+let cur='sp',prev='home';
+const hist=['sp'];
+function G(id){
+  const pe=document.getElementById(cur),ne=document.getElementById(id);
+  if(!ne||id===cur)return;
+  pe.classList.remove('active');pe.classList.add('out');
+  setTimeout(()=>pe.classList.remove('out'),350);
+  ne.classList.add('active');
+  prev=cur;cur=id;hist.push(id);
+}
+function GB(){
+  if(hist.length>1){hist.pop();const p=hist[hist.length-1];G(p);}
+}
+
+function showLoad(txt='Un instant…'){document.getElementById('lov').classList.add('show');document.getElementById('ltxt').textContent=txt}
+function hideLoad(){document.getElementById('lov').classList.remove('show')}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+
+function pickC(el,gid){document.querySelectorAll('#'+gid+' .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on')}
+function pickF(el){el.closest('.fbar').querySelectorAll('.fchip').forEach(c=>c.classList.remove('on'));el.classList.add('on')}
+
+function streamText(elId,text,speed=25){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  el.classList.add('streaming');el.textContent='';
+  let i=0;
+  const iv=setInterval(()=>{if(i<text.length){el.textContent+=text[i++]}else{clearInterval(iv);el.classList.remove('streaming')}},speed);
+}
+
+async function callAI(prompt){
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:`Tu es Daily Match, assistant de décision quotidienne premium pour Paris.
+Tu proposes TOUJOURS une seule suggestion ultra-précise avec un lieu parisien RÉEL.
+Réponds UNIQUEMENT en JSON valide, sans aucun markdown ni backtick.`,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const d=await r.json();
+    const txt=d.content?.find(b=>b.type==='text')?.text||'{}';
+    const clean=txt.replace(/```json|```/g,'').trim();
+    return JSON.parse(clean);
+  }catch(e){console.error(e);return null}
+}
+
+function fillResult(data,defaults={}){
+  const d={...{lieu:'Café de la Paix',type:'Café · Brasserie',quartier:'Opéra · 9ème',adresse:'5 Place de l\'Opéra',budget:'€€€',duree:'~2h',why:'Un classique parisien hors du temps. Terrasse, service attentionné, lumière parfaite.',outfit:'🥼|Blazer beige,👖|Jean slim,👠|Ballerines',music_title:'November · Max Richter',music_vibe:'Parfait pour ce plan'},...data};
+  document.getElementById('res-n').innerHTML=d.lieu;
+  document.getElementById('res-adr').textContent=d.adresse||'Paris';
+  document.getElementById('r-qrt').textContent=d.quartier||'Paris';
+  document.getElementById('r-bud').textContent=d.budget||'€€';
+  document.getElementById('r-dur').textContent=d.duree||'~2h';
+  document.getElementById('r-mom').textContent='Idéal maintenant';
+  document.getElementById('r-mus').textContent=d.music_title||'November · Max Richter';
+  document.getElementById('r-mvi').textContent=d.music_vibe||'Parfait pour ce plan';
+  document.getElementById('res-pills').innerHTML=`<div class="res-pill">${d.budget||'€€'}</div><div class="res-pill">${d.type||'Lieu'}</div><div class="res-pill">Ouvert</div><div class="res-pill">${d.duree||'~2h'}</div>`;
+  if(d.outfit){
+    const pieces=d.outfit.split(',').map(p=>p.trim());
+    document.getElementById('r-outfit').innerHTML=pieces.slice(0,3).map(p=>{const[ic,nm]=(p+'|').split('|');return`<div class="op"><span class="op-ic">${ic}</span><div class="op-nm">${nm||'Pièce'}</div></div>`}).join('');
+  }
+  streamText('ai-why',d.why||'Un choix parfaitement adapté à ton moment.');
+}
+
+async function doWhatNow(){
+  const mood=document.querySelector('#c-mood .on')?.textContent||'Chill';
+  const bud=document.querySelector('#c-bud .on')?.textContent||'€€';
+  const tps=document.querySelector('#c-tps .on')?.textContent||'2–3h';
+  showLoad('IA en cours de décision…');
+  const data=await callAI(`Mood: ${mood}, Budget: ${bud}, Temps: ${tps}, Paris maintenant.
+Propose UN lieu parisien réel parfait. JSON: {"lieu":"nom exact","type":"type","quartier":"quartier · arr.","adresse":"adresse complète","budget":"${bud}","duree":"${tps}","why":"raison 2 phrases pourquoi ce lieu maintenant pour ce mood","outfit":"emoji1|nom1,emoji2|nom2,emoji3|nom3","music_title":"titre · artiste","music_vibe":"vibe courte italique"}`);
+  hideLoad();
+  fillResult(data||{});
+  G('result');
+}
+
+async function doSurprise(){
+  showLoad('Surprise en préparation…');
+  const data=await callAI(`Génère une suggestion surprise premium pour Paris maintenant. JSON: {"lieu":"nom exact","type":"type","quartier":"quartier · arr.","adresse":"adresse complète","budget":"€€","duree":"2h","why":"raison poétique et précise 2 phrases","outfit":"emoji1|nom1,emoji2|nom2,emoji3|nom3","music_title":"titre · artiste","music_vibe":"vibe courte"}`);
+  hideLoad();
+  fillResult(data||{});
+  G('result');
+}
+
+async function doDecide(){
+  showLoad('IA orchestre ta journée…');
+  const data=await callAI(`Crée un plan de journée complet pour Paris, style chic, budget €€, jeudi printanier 18°C.
+JSON: {"phrase":"phrase éditoriale courte premium","tenue":"nom look","restaurant":"nom restaurant exact","bar":"nom bar exact","music":"titre · artiste","music_vibe":"vibe courte","lieu":"nom du bar comme suggestion principale","type":"Bar","quartier":"quartier du bar","adresse":"adresse du bar","budget":"€€€","duree":"soirée","why":"pourquoi ce bar ce soir","outfit":"emoji1|nom1,emoji2|nom2,emoji3|nom3","music_title":"titre · artiste"}`);
+  hideLoad();
+  if(data?.phrase){document.querySelector('.dm-ph').textContent=`"${data.phrase}"`}
+  if(data){fillResult(data);}
+  G('dm');
+}
+
+async function doRegen(){
+  showLoad('Nouvelle suggestion…');
+  const data=await callAI(`Propose UN autre lieu parisien premium pour maintenant, style chill, budget €€, 2h. JSON: {"lieu":"nom exact","type":"type","quartier":"quartier · arr.","adresse":"adresse complète","budget":"€€","duree":"~2h","why":"raison 2 phrases","outfit":"emoji1|nom1,emoji2|nom2,emoji3|nom3","music_title":"titre · artiste","music_vibe":"vibe courte"}`);
+  hideLoad();
+  fillResult(data||{});
+}
+
+async function doRegenSortir(){
+  showLoad('Nouveau bar sélectionné…');
+  const data=await callAI(`Recommande UN autre bar ou lieu de sortie parisien premium pour ce soir. JSON: {"lieu":"nom exact","type":"type","quartier":"quartier · arr.","adresse":"adresse","budget":"€€€","duree":"soirée","why":"raison 1 phrase"}`);
+  hideLoad();
+  if(data){showToast(`✦ ${data.lieu} sélectionné`)}else{showToast('Démo · Suggestion chargée')}
+}
+
+async function doAIManger(){
+  showLoad('Restaurant IA en cours…');
+  const data=await callAI(`Recommande UN restaurant parisien pour déjeuner maintenant, budget €€. JSON: {"lieu":"nom exact","type":"type cuisine","quartier":"quartier · arr.","adresse":"adresse","budget":"€€","duree":"~1h30","why":"raison 1 phrase"}`);
+  hideLoad();
+  if(data){showToast(`✦ ${data.lieu} sélectionné`)}else{showToast('Démo · Restaurant chargé')}
+}
+
+async function doAITenue(){
+  showLoad('IA génère ton look…');
+  const data=await callAI(`Génère un look vestimentaire pour Paris style chic, 18°C printanier, terrasse café. JSON: {"look_name":"nom look","analysis":"analyse 2 phrases sur les pièces et la météo — commence directement"}`);
+  hideLoad();
+  if(data?.analysis){streamText('tenue-ai',data.analysis);}
+  showToast(`✦ Nouveau look généré`);
+}
+
+async function doAIDailyMatch(){
+  showLoad('Régénération de ta journée…');
+  const data=await callAI(`Crée une nouvelle journée complète premium pour Paris, style chic, budget €€, journée printanière. JSON: {"phrase":"phrase éditoriale courte","lieu":"bar du soir exact","type":"Bar","quartier":"quartier","adresse":"adresse","budget":"€€€","duree":"soirée","why":"raison 1 phrase","outfit":"emoji1|nom1,emoji2|nom2,emoji3|nom3","music_title":"titre · artiste","music_vibe":"vibe"}`);
+  hideLoad();
+  if(data?.phrase){document.querySelector('.dm-ph').textContent=`"${data.phrase}"`}
+  if(data){fillResult(data);}
+  showToast('✦ Journée régénérée par IA');
+}
+
+async function doScan(){
+  showLoad('Vision IA en cours…');
+  const data=await callAI(`Analyse un blazer structuré beige camel photographié. JSON: {"analysis":"analyse IA 2 phrases sur style, coupe et occasions — commence directement"}`);
+  hideLoad();
+  document.getElementById('sz').style.display='none';
+  document.getElementById('sr').style.display='block';
+  if(data?.analysis){streamText('scan-ai',data.analysis);}else{streamText('scan-ai','Veste structurée coupe tailored. Tissu laine mélangée, finitions soignées. Polyvalente pour le casual chic parisien.');}
+}
+
+function setGreeting(){
+  const h=new Date().getHours();
+  const days=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  const months=['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'];
+  const mom=h<12?'Matin':h<14?'Déjeuner':h<18?'Après-midi':h<22?'Soir':'Nuit';
+  const d=new Date();
+  document.getElementById('gt-sub').textContent=`${days[d.getDay()]} ${mom} · ${d.getDate()} ${months[d.getMonth()]}`;
+}
+
+buildNavs();setGreeting();
+</script>
